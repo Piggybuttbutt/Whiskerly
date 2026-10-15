@@ -1,0 +1,15 @@
+{
+  "name": "whiskerly",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Whiskerly: a cat-narrated planner for Android",
+  "dependencies": {
+    "@capacitor/android": "6.2.1",
+    "@capacitor/core": "6.2.1",
+    "@capacitor/local-notifications": "6.1.2",
+    "@capacitor/preferences": "6.0.3"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "6.2.1"
+  }
+}

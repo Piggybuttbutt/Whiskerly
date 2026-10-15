@@ -1,0 +1,10 @@
+{
+  "appId": "com.whiskerly.planner",
+  "appName": "Whiskerly",
+  "webDir": "www",
+  "backgroundColor": "#1b1520",
+  "android": { "backgroundColor": "#1b1520" },
+  "plugins": {
+    "LocalNotifications": { "smallIcon": "ic_stat_paw", "iconColor": "#FF9A4D" }
+  }
+}

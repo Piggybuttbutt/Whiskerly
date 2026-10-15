@@ -1,0 +1,62 @@
+name: Build Whiskerly APK
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - name: Install Capacitor
+        run: npm install
+
+      - name: Create the Android project
+        run: npx cap add android
+
+      - name: Apply Nightstar branding and permissions
+        run: node scripts/configure-android.js
+        env:
+          RUN_NUMBER: ${{ github.run_number }}
+
+      - name: Copy the app into the Android project
+        run: npx cap sync android
+
+      - name: Use the fixed signing key so updates install over the old version
+        run: mkdir -p ~/.android && cp keystore/debug.keystore ~/.android/debug.keystore
+
+      - name: Build the APK
+        working-directory: android
+        run: chmod +x gradlew && ./gradlew assembleDebug --no-daemon
+
+      - name: Name the APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk Whiskerly.apk
+
+      - name: Keep a copy with this run
+        uses: actions/upload-artifact@v4
+        with:
+          name: Whiskerly-apk
+          path: Whiskerly.apk
+
+      - name: Publish it as a release you can download on your phone
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release create "v1.0.${{ github.run_number }}" Whiskerly.apk \
+            --title "Whiskerly 1.0.${{ github.run_number }}" \
+            --notes "On your Android phone, tap Whiskerly.apk below to download it, then open it to install."
